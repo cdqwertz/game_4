@@ -1,0 +1,7 @@
+{
+	"name": "game_4",
+	"version": "0.0.1",
+	"main": "./js/server.js",
+	"dependencies": {
+	}
+}
