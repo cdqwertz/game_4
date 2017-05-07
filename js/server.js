@@ -1,6 +1,12 @@
 const http = require("http");
 const fs = require('fs');
 
+const map = {
+	width : 50,
+	height : 50,
+	data : []
+}
+
 var index = fs.readFileSync("./index.html")
 var client_js = fs.readFileSync("./js/client.js")
 
