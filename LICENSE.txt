@@ -1,5 +1,3 @@
-/*
-
 License for Code
 ----------------
 
@@ -22,31 +20,3 @@ PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
 FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
-*/
-
-var canvas;
-var ctx;
-var last_time = 0;
-
-var game_state = 0;
-
-function load() {
-	canvas = document.getElementById("canvas");
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	ctx = canvas.getContext("2d");
-
-	window.requestAnimationFrame(update);
-}
-
-function update(t) {
-	var dtime = t - last_time;
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	if(game_state == 0) {
-	}
-
-	last_time = t;
-	window.requestAnimationFrame(update);
-}
