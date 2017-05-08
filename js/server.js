@@ -51,12 +51,19 @@ io.on("connection", function(socket) {
 
 	socket.on("disconnect", function() {
 		console.log("disconnect");
+		//TODO: remove player
 	});
 
 	socket.on("hello", function (data) {
-		my_game.players.push(new game.player(socket, data.name));
-		io.emit("data", my_game.get_data());
-		console.log("send data");
+		if (my_game.is_name_allowed(data.name)) {
+			my_game.players.push(new game.player(socket, data.name, my_game.players.length));
+			io.emit("data", my_game.get_data());
+			console.log("send data");
+		} else {
+			socket.emit("kick", {
+				reason : "Invalid name"
+			})
+		}
 	})
 });
 

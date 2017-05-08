@@ -30,7 +30,7 @@ module.exports = {
 
 	},
 
-	player : function (socket, name) {
+	player : function (socket, name, player_id) {
 		this.socket = socket;
 		this.hp = 100;
 		this.name = name;
@@ -38,6 +38,8 @@ module.exports = {
 			x : 0,
 			y : 0
 		};
+
+		this.player_id = player_id;
 	},
 
 	game : function () {
@@ -49,6 +51,24 @@ module.exports = {
 
 		this.players = [];
 
+		this.is_name_allowed = function(name) {
+			for(var i = 0; i < this.players.length; i++) {
+				if(this.players[i].name == name) {
+					return false;
+				}
+			}
+
+			const bad_names = [""];
+
+			for(var i = 0; i < bad_names.length; i++) {
+				if(name == bad_names[i]) {
+					return false;
+				}
+			}
+
+			return true;
+		};
+
 		this.get_data = function(my_player) {
 			data = [];
 			for(var i = 0; i < this.players.length; i++) {
@@ -56,7 +76,8 @@ module.exports = {
 				data.push({
 					pos_x : p.pos.x,
 					pos_y : p.pos.y,
-					name : p.name
+					name : p.name,
+					id : p.player_id
 				});
 			}
 

@@ -29,7 +29,7 @@ var canvas;
 var ctx;
 var last_time = 0;
 
-var game_state = 0;
+var game_state = 1;
 var socket = io();
 
 var players = [];
@@ -37,7 +37,8 @@ var local_player = {
 	x : 0,
 	y : 0,
 	name : "",
-	speed : 20
+	speed : 20,
+	id : -1
 };
 
 var input = {
@@ -53,13 +54,6 @@ function load() {
 	canvas.height = 150;
 	ctx = canvas.getContext("2d");
 
-	//TODO: replace with custom dialog + check if name is allowed
-	local_player.name = prompt("Enter your nickname");
-
-	socket.emit("hello", {
-		name : local_player.name
-	});
-
 	window.requestAnimationFrame(update);
 }
 
@@ -68,6 +62,7 @@ function update(t) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(game_state == 0) {
+		// move player
 		if(input.up) {
 			local_player.y -= local_player.speed * (dtime/1000.0);
 		}
@@ -86,23 +81,55 @@ function update(t) {
 
 		// Placeholder
 		ctx.fillRect(local_player.x, local_player.y, 16, 16);
+	} else if (game_state == 1) {
+		local_player.name = prompt("Enter your nickname");
+
+		socket.emit("hello", {
+			name : local_player.name
+		});
+
+		game_state = 2;
+	} else if (game_state == 2) {
+
 	}
 
 	last_time = t;
 	window.requestAnimationFrame(update);
 }
 
+// get data (player pos)
+
 socket.on("data", function(data) {
 	players = [];
 	console.log(JSON.stringify(data));
 	for(var i = 0; i < data.length; i++) {
-		players.push({
-			x : data[i].pos_x,
-			y : data[i].pos_y,
-			name : data[i].name
-		});
+		if (data[i].name == local_player.name) {
+			local_player.id = data[i].id
+			local_player.x = data[i].pos_x
+			local_player.y = data[i].pos_y
+		} else {
+			players[data[i].id] = {
+				x : data[i].pos_x,
+				y : data[i].pos_y,
+				name : data[i].name,
+				id : data[i].id
+			};
+		}
+	}
+
+	if(game_state == 2) {
+		game_state = 0;
 	}
 });
+
+// kick player
+
+socket.on("kick", function(data) {
+	game_state = 1;
+	alert(data.reason);
+});
+
+// input
 
 document.onkeydown = function (e) {
 	console.log(e.which);
