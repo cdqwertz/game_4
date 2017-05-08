@@ -47,18 +47,18 @@ var my_server = http.createServer(function (req, res) {
 const io = require("socket.io")(my_server);
 
 io.on("connection", function(socket) {
-	console.log("connect " + socket.id);
+	console.log("connect");
 
 	socket.on("disconnect", function() {
-		console.log("disconnect " + socket.id);
-	})
+		console.log("disconnect");
+	});
 
 	socket.on("hello", function (data) {
 		my_game.players.push(new game.player(socket, data.name));
 		io.emit("data", my_game.get_data());
 		console.log("send data");
 	})
-})
+});
 
 my_server.listen(8080);
 console.log("Server running");

@@ -3,6 +3,25 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Game</title>
+
+		<style>
+			#canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width : 100vw;
+				height : calc(100vw / 2);
+				background: #fff;
+				image-rendering : optimize-speed;
+				image-rendering : -moz-crisp-edges;
+				image-rendering : -o-crisp-edges;
+				image-rendering : pixelated;
+			}
+
+			body {
+				background: #000;
+			}
+		</style>
 	</head>
 	<body onload="load();">
 		<canvas id="canvas"></canvas>

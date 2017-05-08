@@ -36,17 +36,25 @@ var players = [];
 var local_player = {
 	x : 0,
 	y : 0,
-	name : ""
+	name : "",
+	speed : 20
+};
+
+var input = {
+	up : false,
+	down : false,
+	left : false,
+	right : false
 };
 
 function load() {
 	canvas = document.getElementById("canvas");
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	canvas.width = 300;
+	canvas.height = 150;
 	ctx = canvas.getContext("2d");
 
-	//TODO: replace with custom dialog
-	local_player.name = prompt("Enter your name");
+	//TODO: replace with custom dialog + check if name is allowed
+	local_player.name = prompt("Enter your nickname");
 
 	socket.emit("hello", {
 		name : local_player.name
@@ -60,6 +68,24 @@ function update(t) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(game_state == 0) {
+		if(input.up) {
+			local_player.y -= local_player.speed * (dtime/1000.0);
+		}
+
+		if(input.down) {
+			local_player.y += local_player.speed * (dtime/1000.0);
+		}
+
+		if(input.left) {
+			local_player.x -= local_player.speed * (dtime/1000.0);
+		}
+
+		if(input.right) {
+			local_player.x += local_player.speed * (dtime/1000.0);
+		}
+
+		// Placeholder
+		ctx.fillRect(local_player.x, local_player.y, 16, 16);
 	}
 
 	last_time = t;
@@ -76,4 +102,32 @@ socket.on("data", function(data) {
 			name : data[i].name
 		});
 	}
-})
+});
+
+document.onkeydown = function (e) {
+	console.log(e.which);
+
+	if(e.which == 37) {
+		input.left = true;
+	} else if(e.which == 38) {
+		input.up = true;
+	} else if(e.which == 39) {
+		input.right = true;
+	} else if(e.which == 40) {
+		input.down = true;
+	}
+};
+
+document.onkeyup = function (e) {
+	console.log(e.which);
+
+	if(e.which == 37) {
+		input.left = false;
+	} else if(e.which == 38) {
+		input.up = false;
+	} else if(e.which == 39) {
+		input.right = false;
+	} else if(e.which == 40) {
+		input.down = false;
+	}
+}
