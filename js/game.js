@@ -25,55 +25,42 @@ DEALINGS IN THE SOFTWARE.
 
 */
 
-var canvas;
-var ctx;
-var last_time = 0;
+module.exports = {
+	chunk : function () {
 
-var game_state = 0;
-var socket = io();
+	},
 
-var players = [];
-var local_player = {
-	x : 0,
-	y : 0,
-	name : ""
+	player : function (socket, name) {
+		this.socket = socket;
+		this.hp = 100;
+		this.name = name;
+		this.pos = {
+			x : 0,
+			y : 0
+		};
+	},
+
+	game : function () {
+		this.map = {
+			width : 50,
+			height : 50,
+			data : []
+		};
+
+		this.players = [];
+
+		this.get_data = function(my_player) {
+			data = [];
+			for(var i = 0; i < this.players.length; i++) {
+				var p = this.players[i];
+				data.push({
+					pos_x : p.pos.x,
+					pos_y : p.pos.y,
+					name : p.name
+				});
+			}
+
+			return data;
+		};
+	}
 };
-
-function load() {
-	canvas = document.getElementById("canvas");
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	ctx = canvas.getContext("2d");
-
-	//TODO: replace with custom dialog
-	local_player.name = prompt("Enter your name");
-
-	socket.emit("hello", {
-		name : local_player.name
-	});
-
-	window.requestAnimationFrame(update);
-}
-
-function update(t) {
-	var dtime = t - last_time;
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	if(game_state == 0) {
-	}
-
-	last_time = t;
-	window.requestAnimationFrame(update);
-}
-
-socket.on("data", function(data) {
-	players = [];
-	console.log(JSON.stringify(data));
-	for(var i = 0; i < data.length; i++) {
-		players.push({
-			x : data[i].pos_x,
-			y : data[i].pos_y,
-			name : data[i].name
-		});
-	}
-})

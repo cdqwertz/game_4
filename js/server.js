@@ -26,16 +26,13 @@ DEALINGS IN THE SOFTWARE.
 */
 
 const http = require("http");
-const fs = require('fs');
+const fs = require("fs");
+const game = require(__dirname + "/game.js");
 
-const map = {
-	width : 50,
-	height : 50,
-	data : []
-}
+var index = fs.readFileSync("./index.html");
+var client_js = fs.readFileSync("./js/client.js");
 
-var index = fs.readFileSync("./index.html")
-var client_js = fs.readFileSync("./js/client.js")
+var my_game = new game.game();
 
 var my_server = http.createServer(function (req, res) {
 	if (req.url == "/") {
@@ -52,8 +49,14 @@ const io = require("socket.io")(my_server);
 io.on("connection", function(socket) {
 	console.log("connect " + socket.id);
 
-	socket.on("disconnect", function(s) {
+	socket.on("disconnect", function() {
 		console.log("disconnect " + socket.id);
+	})
+
+	socket.on("hello", function (data) {
+		my_game.players.push(new game.player(socket, data.name));
+		io.emit("data", my_game.get_data());
+		console.log("send data");
 	})
 })
 
