@@ -45,6 +45,16 @@ var my_server = http.createServer(function (req, res) {
 		res.writeHead(200);
 		res.end(client_js);
 	}
+});
+
+const io = require("socket.io")(my_server);
+
+io.on("connection", function(socket) {
+	console.log("connect " + socket.id);
+
+	socket.on("disconnect", function(s) {
+		console.log("disconnect " + socket.id);
+	})
 })
 
 my_server.listen(8080);

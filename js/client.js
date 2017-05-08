@@ -30,6 +30,7 @@ var ctx;
 var last_time = 0;
 
 var game_state = 0;
+var socket = io();
 
 function load() {
 	canvas = document.getElementById("canvas");
