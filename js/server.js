@@ -51,20 +51,42 @@ io.on("connection", function(socket) {
 
 	socket.on("disconnect", function() {
 		console.log("disconnect");
-		//TODO: remove player
+		var pl = my_game.get_player_index_by_socket_id(socket.id);
+		if(pl) {
+			my_game.leave(pl);
+		}
 	});
 
 	socket.on("hello", function (data) {
 		if (my_game.is_name_allowed(data.name)) {
-			my_game.players.push(new game.player(socket, data.name, my_game.players.length));
+			my_player = new game.player(socket, data.name, my_game.get_player_id());
+			my_game.players.push(my_player);
 			io.emit("data", my_game.get_data());
-			console.log("send data");
+			console.log("send data, id: " + my_player.player_id);
+
+			my_player.socket.on("move", function(data) {
+				var pl = my_game.get_player_by_socket_id(socket.id);
+				if(pl) {
+					pl.pos.x = data.x;
+					pl.pos.y = data.y;
+
+					for(var i = 0; i < my_game.players.length; i++) {
+						if(pl.player_id != my_game.players[i].player_id) {
+							my_game.players[i].socket.emit("moved", {
+								player_id : pl.player_id,
+								x : data.x,
+								y : data.y
+							});
+						}
+					}
+				}
+			});
 		} else {
 			socket.emit("kick", {
 				reason : "Invalid name"
 			})
 		}
-	})
+	});
 });
 
 my_server.listen(8080);

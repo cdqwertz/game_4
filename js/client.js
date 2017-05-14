@@ -65,22 +65,48 @@ function update(t) {
 		// move player
 		if(input.up) {
 			local_player.y -= local_player.speed * (dtime/1000.0);
+
+			socket.emit("move", {
+				x : local_player.x,
+				y : local_player.y
+			});
 		}
 
 		if(input.down) {
 			local_player.y += local_player.speed * (dtime/1000.0);
+
+			socket.emit("move", {
+				x : local_player.x,
+				y : local_player.y
+			});
 		}
 
 		if(input.left) {
 			local_player.x -= local_player.speed * (dtime/1000.0);
+
+			socket.emit("move", {
+				x : local_player.x,
+				y : local_player.y
+			});
 		}
 
 		if(input.right) {
 			local_player.x += local_player.speed * (dtime/1000.0);
+
+			socket.emit("move", {
+				x : local_player.x,
+				y : local_player.y
+			});
 		}
 
 		// Placeholder
 		ctx.fillRect(local_player.x, local_player.y, 16, 16);
+
+		for(var i = 0; i < players.length; i++) {
+			if (players[i]) {
+				ctx.fillRect(players[i].x, players[i].y, 16, 16);
+			}
+		}
 	} else if (game_state == 1) {
 		local_player.name = prompt("Enter your nickname");
 
@@ -97,11 +123,11 @@ function update(t) {
 	window.requestAnimationFrame(update);
 }
 
-// get data (player pos)
+// get data (player pos, ids, ...)
+// when a new player joins the game
 
 socket.on("data", function(data) {
 	players = [];
-	console.log(JSON.stringify(data));
 	for(var i = 0; i < data.length; i++) {
 		if (data[i].name == local_player.name) {
 			local_player.id = data[i].id
@@ -122,6 +148,12 @@ socket.on("data", function(data) {
 	}
 });
 
+socket.on("moved", function (data) {
+	// set new pos
+	players[data.player_id].x = data.x;
+	players[data.player_id].y = data.y;
+})
+
 // kick player
 
 socket.on("kick", function(data) {
@@ -132,29 +164,25 @@ socket.on("kick", function(data) {
 // input
 
 document.onkeydown = function (e) {
-	console.log(e.which);
-
-	if(e.which == 37) {
+	if(e.which == 37 || e.which == 65) {
 		input.left = true;
-	} else if(e.which == 38) {
+	} else if(e.which == 38 || e.which == 87) {
 		input.up = true;
-	} else if(e.which == 39) {
+	} else if(e.which == 39 || e.which == 68) {
 		input.right = true;
-	} else if(e.which == 40) {
+	} else if(e.which == 40 || e.which == 83) {
 		input.down = true;
 	}
 };
 
 document.onkeyup = function (e) {
-	console.log(e.which);
-
-	if(e.which == 37) {
+	if(e.which == 37 || e.which == 65) {
 		input.left = false;
-	} else if(e.which == 38) {
+	} else if(e.which == 38 || e.which == 87) {
 		input.up = false;
-	} else if(e.which == 39) {
+	} else if(e.which == 39 || e.which == 68) {
 		input.right = false;
-	} else if(e.which == 40) {
+	} else if(e.which == 40 || e.which == 83) {
 		input.down = false;
 	}
 }

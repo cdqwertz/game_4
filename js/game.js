@@ -83,5 +83,40 @@ module.exports = {
 
 			return data;
 		};
+
+		this.leave = function(index) {
+			
+		}
+
+		this.get_player_id = function() {
+			var used_ids = [];
+			for(var i = 0; i < this.players.length; i++) {
+				while(used_ids.length <= this.players[i].player_id + 1) {
+					used_ids.push(0);
+				}
+
+				used_ids[this.players[i].player_id] = 1
+			}
+			used_ids.push(0);
+			return used_ids.indexOf(0);
+		};
+
+		// long function name...
+		this.get_player_by_socket_id = function(socket_id) {
+			for(var i = 0; i < this.players.length; i++) {
+				if(socket_id == this.players[i].socket.id) {
+					return this.players[i];
+				}
+			}
+		};
+
+		// even longer name
+		this.get_player_index_by_socket_id = function(socket_id) {
+			for(var i = 0; i < this.players.length; i++) {
+				if(socket_id == this.players[i].socket.id) {
+					return i;
+				}
+			}
+		};
 	}
 };
