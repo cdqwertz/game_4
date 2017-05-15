@@ -30,7 +30,7 @@ module.exports = {
 
 	},
 
-	player : function (socket, name, player_id) {
+	player : function (socket, name, player_id,team) {
 		this.socket = socket;
 		this.hp = 100;
 		this.name = name;
@@ -38,7 +38,7 @@ module.exports = {
 			x : 0,
 			y : 0
 		};
-
+		this.team=team;
 		this.player_id = player_id;
 	},
 
