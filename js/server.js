@@ -52,8 +52,9 @@ io.on("connection", function(socket) {
 	socket.on("disconnect", function() {
 		console.log("disconnect");
 		var pl = my_game.get_player_index_by_socket_id(socket.id);
-		if(pl) {
+		if(pl != undefined) {
 			my_game.leave(pl);
+			io.emit("data", my_game.get_data());
 		}
 	});
 

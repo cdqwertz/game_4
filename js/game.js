@@ -85,7 +85,9 @@ module.exports = {
 		};
 
 		this.leave = function(index) {
-
+			console.log("player left " + index);
+			delete this.players[index].socket;
+			this.players.splice(index, 1);
 		}
 
 		this.get_player_id = function() {
@@ -109,6 +111,15 @@ module.exports = {
 				}
 			}
 		};
+
+		// unused
+		this.get_player_index_by_id = function(my_id) {
+			for (var i = 0; i < this.players.length; i++) {
+				if(this.players[i].id == my_id) {
+					return i;
+				}
+			}
+		}
 
 		// even longer name
 		this.get_player_index_by_socket_id = function(socket_id) {
