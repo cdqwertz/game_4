@@ -37,7 +37,8 @@ var local_player = {
 	x : 0,
 	y : 0,
 	name : "",
-	speed : 20,
+	speed : 30,
+	speed_run : 40,
 	id : -1
 };
 
@@ -45,7 +46,8 @@ var input = {
 	up : false,
 	down : false,
 	left : false,
-	right : false
+	right : false,
+	run : false
 };
 
 function load() {
@@ -62,36 +64,25 @@ function update(t) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(game_state == 0) {
-		// move player
-		if(input.up) {
-			local_player.y -= local_player.speed * (dtime/1000.0);
+		if(input.up || input.down || input.left || input.right) {
+			// move player
+			var my_speed = (input.run ? local_player.speed_run : local_player.speed);
 
-			socket.emit("move", {
-				x : local_player.x,
-				y : local_player.y
-			});
-		}
+			if(input.up) {
+				local_player.y -= my_speed * (dtime/1000.0);
+			}
 
-		if(input.down) {
-			local_player.y += local_player.speed * (dtime/1000.0);
+			if(input.down) {
+				local_player.y += my_speed * (dtime/1000.0);
+			}
 
-			socket.emit("move", {
-				x : local_player.x,
-				y : local_player.y
-			});
-		}
+			if(input.left) {
+				local_player.x -= my_speed * (dtime/1000.0);
+			}
 
-		if(input.left) {
-			local_player.x -= local_player.speed * (dtime/1000.0);
-
-			socket.emit("move", {
-				x : local_player.x,
-				y : local_player.y
-			});
-		}
-
-		if(input.right) {
-			local_player.x += local_player.speed * (dtime/1000.0);
+			if(input.right) {
+				local_player.x += my_speed * (dtime/1000.0);
+			}
 
 			socket.emit("move", {
 				x : local_player.x,
@@ -172,6 +163,8 @@ document.onkeydown = function (e) {
 		input.right = true;
 	} else if(e.which == 40 || e.which == 83) {
 		input.down = true;
+	} else if (e.which == 16) {
+		input.run = true;
 	}
 };
 
@@ -184,5 +177,7 @@ document.onkeyup = function (e) {
 		input.right = false;
 	} else if(e.which == 40 || e.which == 83) {
 		input.down = false;
+	} else if (e.which == 16) {
+		input.run = false;
 	}
 }

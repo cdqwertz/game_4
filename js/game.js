@@ -85,7 +85,7 @@ module.exports = {
 		};
 
 		this.leave = function(index) {
-			
+
 		}
 
 		this.get_player_id = function() {
