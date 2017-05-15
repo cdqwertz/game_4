@@ -39,7 +39,8 @@ var local_player = {
 	name : "",
 	speed : 30,
 	speed_run : 40,
-	id : -1
+	id : -1,
+	team : -1
 };
 
 var input = {
@@ -91,10 +92,12 @@ function update(t) {
 		}
 
 		// Placeholder
+		ctx.fillStyle="#0000FF";
 		ctx.fillRect(local_player.x, local_player.y, 16, 16);
 
 		for(var i = 0; i < players.length; i++) {
 			if (players[i]) {
+				ctx.fillStyle="#00FF00";
 				ctx.fillRect(players[i].x, players[i].y, 16, 16);
 			}
 		}
@@ -124,12 +127,14 @@ socket.on("data", function(data) {
 			local_player.id = data[i].id
 			local_player.x = data[i].pos_x
 			local_player.y = data[i].pos_y
+			local_player.team = data[i].team
 		} else {
 			players[data[i].id] = {
 				x : data[i].pos_x,
 				y : data[i].pos_y,
 				name : data[i].name,
-				id : data[i].id
+				id : data[i].id,
+				team : data[i].team
 			};
 		}
 	}
