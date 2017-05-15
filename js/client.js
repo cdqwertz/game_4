@@ -92,10 +92,12 @@ function update(t) {
 		}
 
 		// Placeholder
+		ctx.fillStyle="#0000FF";
 		ctx.fillRect(local_player.x, local_player.y, 16, 16);
 
 		for(var i = 0; i < players.length; i++) {
 			if (players[i]) {
+				ctx.fillStyle="#00FF00";
 				ctx.fillRect(players[i].x, players[i].y, 16, 16);
 			}
 		}
