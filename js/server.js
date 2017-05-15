@@ -31,6 +31,11 @@ const game = require(__dirname + "/game.js");
 
 var index = fs.readFileSync("./index.html");
 var client_js = fs.readFileSync("./js/client.js");
+var images = {
+	player : fs.readFileSync("./img/player.png"),
+	tree : fs.readFileSync("./img/tree.png"),
+	dirt : fs.readFileSync("./img/dirt.png")
+};
 
 var my_game = new game.game();
 
@@ -41,6 +46,12 @@ var my_server = http.createServer(function (req, res) {
 	} else if (req.url == "/client.js") {
 		res.writeHead(200);
 		res.end(client_js);
+	} else if (req.url == "/img/player.png") {
+		res.writeHead(200, {"Content-Type" : "image/png"});
+		res.end(images.player);
+	} else if (req.url == "/img/dirt.png") {
+		res.writeHead(200, {"Content-Type" : "image/png"});
+		res.end(images.dirt);
 	}
 });
 

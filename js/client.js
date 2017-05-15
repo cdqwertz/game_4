@@ -51,10 +51,16 @@ var input = {
 	run : false
 };
 
+var images = {
+	player : new Image()
+};
+
+images.player.src = "/img/player.png";
+
 function load() {
 	canvas = document.getElementById("canvas");
-	canvas.width = 300;
-	canvas.height = 150;
+	canvas.width = 640;
+	canvas.height = 320;
 	ctx = canvas.getContext("2d");
 
 	window.requestAnimationFrame(update);
