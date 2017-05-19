@@ -40,7 +40,10 @@ var local_player = {
 	speed : 30,
 	speed_run : 40,
 	id : -1,
-	team : -1
+	team : -1,
+
+	attack : false,
+	attack_dir : 0
 };
 
 var input = {
@@ -52,10 +55,14 @@ var input = {
 };
 
 var images = {
-	player : new Image()
+	player_red : new Image(),
+	player_blue : new Image(),
+	sword : new Image()
 };
 
-images.player.src = "/img/player.png";
+images.player_red.src = "/img/player_red.png";
+images.player_blue.src = "/img/player_blue.png";
+images.sword.src = "/img/sword.png";
 
 function load() {
 	canvas = document.getElementById("canvas");
@@ -97,14 +104,19 @@ function update(t) {
 			});
 		}
 
-		// Placeholder
-		ctx.fillStyle="#0000FF";
-		ctx.fillRect(local_player.x, local_player.y, 16, 16);
+		draw_player(local_player);
 
+		// draw other players
 		for(var i = 0; i < players.length; i++) {
 			if (players[i]) {
-				ctx.fillStyle="#00FF00";
-				ctx.fillRect(players[i].x, players[i].y, 16, 16);
+				if(players[i].team == 0) {
+					ctx.drawImage(images.player_blue, Math.round(players[i].x), Math.round(players[i].y));
+				} else if(players[i].team == 1) {
+					ctx.drawImage(images.player_red, Math.round(players[i].x), Math.round(players[i].y));
+				}
+
+				// draw weapon
+				ctx.drawImage(images.sword, Math.round(players[i].x) + 8, Math.round(players[i].y) - 2);
 			}
 		}
 	} else if (game_state == 1) {
@@ -121,6 +133,48 @@ function update(t) {
 
 	last_time = t;
 	window.requestAnimationFrame(update);
+}
+
+// used to draw player
+
+function draw_player(pl) {
+	ctx.translate(Math.round(pl.x), Math.round(pl.y));
+
+	// flip player
+	if(pl.attack_dir == 1) {
+		ctx.translate(16, 0);
+		ctx.scale(-1, 1);
+	}
+
+	// draw player
+	if(pl.team == 0) {
+		ctx.drawImage(images.player_blue, 0, 0);
+	} else if (pl.team == 1) {
+		ctx.drawImage(images.player_red, 0, 0);
+	}
+
+	// undo transformations
+	if(pl.attack_dir == 1) {
+		ctx.scale(-1, 1);
+		ctx.translate(-16, 0);
+	}
+
+	ctx.translate(-Math.round(pl.x), -Math.round(pl.y));
+
+	// draw weapon
+	ctx.translate(Math.round(pl.x) + 8, Math.round(pl.y) - 2);
+
+	if(pl.attack_dir == 1) {
+		ctx.scale(-1, 1);
+	}
+
+	ctx.drawImage(images.sword, 0, 0);
+
+	if(pl.attack_dir == 1) {
+		ctx.scale(-1, 1);
+	}
+
+	ctx.translate(-(Math.round(pl.x) + 8), -(Math.round(pl.y) - 2));
 }
 
 // get data (player pos, ids, ...)
@@ -191,4 +245,15 @@ document.onkeyup = function (e) {
 	} else if (e.which == 16) {
 		input.run = false;
 	}
+};
+
+document.onmousedown = function(event) {
+	var x = event.pageX / (window.innerWidth/640);
+	//var y = event.pageY / canvas.style.height;
+	local_player.attack_dir = (x > local_player.x ? 0 : 1);
+	local_player.attack = true;
+}
+
+document.onmouseup = function(event) {
+	local_player.attack = false;
 }

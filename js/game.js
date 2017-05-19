@@ -77,7 +77,8 @@ module.exports = {
 					pos_x : p.pos.x,
 					pos_y : p.pos.y,
 					name : p.name,
-					id : p.player_id
+					id : p.player_id,
+					team : p.team
 				});
 			}
 
