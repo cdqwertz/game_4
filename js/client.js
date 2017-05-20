@@ -32,7 +32,10 @@ var last_time = 0;
 var game_state = 1;
 var socket = io();
 
+// other players
 var players = [];
+
+// local_player
 var local_player = {
 	x : 0,
 	y : 0,
@@ -54,15 +57,18 @@ var input = {
 	run : false
 };
 
+// sprites / images
 var images = {
 	player_red : new Image(),
 	player_blue : new Image(),
-	sword : new Image()
+	sword : new Image(),
+	sword_attack : new Image()
 };
 
 images.player_red.src = "/img/player_red.png";
 images.player_blue.src = "/img/player_blue.png";
 images.sword.src = "/img/sword.png";
+images.sword_attack.src = "/img/sword_attack.png";
 
 function load() {
 	canvas = document.getElementById("canvas");
@@ -70,6 +76,7 @@ function load() {
 	canvas.height = 320;
 	ctx = canvas.getContext("2d");
 
+	// call update
 	window.requestAnimationFrame(update);
 }
 
@@ -100,25 +107,21 @@ function update(t) {
 
 			socket.emit("move", {
 				x : local_player.x,
-				y : local_player.y
+				y : local_player.y,
+				attack : local_player.attack,
+				attack_dir : local_player.attack_dir
 			});
 		}
-
-		draw_player(local_player);
 
 		// draw other players
 		for(var i = 0; i < players.length; i++) {
 			if (players[i]) {
-				if(players[i].team == 0) {
-					ctx.drawImage(images.player_blue, Math.round(players[i].x), Math.round(players[i].y));
-				} else if(players[i].team == 1) {
-					ctx.drawImage(images.player_red, Math.round(players[i].x), Math.round(players[i].y));
-				}
-
-				// draw weapon
-				ctx.drawImage(images.sword, Math.round(players[i].x) + 8, Math.round(players[i].y) - 2);
+				draw_player(players[i]);
 			}
 		}
+
+		// draw local_player
+		draw_player(local_player);
 	} else if (game_state == 1) {
 		local_player.name = prompt("Enter your nickname");
 
@@ -132,6 +135,8 @@ function update(t) {
 	}
 
 	last_time = t;
+
+	// call update
 	window.requestAnimationFrame(update);
 }
 
@@ -162,19 +167,23 @@ function draw_player(pl) {
 	ctx.translate(-Math.round(pl.x), -Math.round(pl.y));
 
 	// draw weapon
-	ctx.translate(Math.round(pl.x) + 8, Math.round(pl.y) - 2);
+	ctx.translate(Math.round(pl.x) + 8, Math.round(pl.y) - 3);
 
 	if(pl.attack_dir == 1) {
 		ctx.scale(-1, 1);
 	}
 
-	ctx.drawImage(images.sword, 0, 0);
+	if(!pl.attack) {
+		ctx.drawImage(images.sword, 0, 0);
+	} else {
+		ctx.drawImage(images.sword_attack, 0, 9);
+	}
 
 	if(pl.attack_dir == 1) {
 		ctx.scale(-1, 1);
 	}
 
-	ctx.translate(-(Math.round(pl.x) + 8), -(Math.round(pl.y) - 2));
+	ctx.translate(-(Math.round(pl.x) + 8), -(Math.round(pl.y) - 3));
 }
 
 // get data (player pos, ids, ...)
@@ -208,6 +217,8 @@ socket.on("moved", function (data) {
 	// set new pos
 	players[data.player_id].x = data.x;
 	players[data.player_id].y = data.y;
+	players[data.player_id].attack = data.attack;
+	players[data.player_id].attack_dir = data.attack_dir;
 })
 
 // kick player
@@ -249,11 +260,43 @@ document.onkeyup = function (e) {
 
 document.onmousedown = function(event) {
 	var x = event.pageX / (window.innerWidth/640);
-	//var y = event.pageY / canvas.style.height;
 	local_player.attack_dir = (x > local_player.x ? 0 : 1);
 	local_player.attack = true;
+
+	if(input.run) {
+		if(local_player.attack_dir == 0) {
+			local_player.x += 2;
+		} else {
+			local_player.x -= 2;
+		}
+	} else {
+		if(local_player.attack_dir == 0) {
+			local_player.x += 1;
+		} else {
+			local_player.x -= 1;
+		}
+	}
+
+	socket.emit("move", {
+		x : local_player.x,
+		y : local_player.y,
+		attack : local_player.attack,
+		attack_dir : local_player.attack_dir
+	});
+}
+
+document.onmousemove = function(event) {
+	var x = event.pageX / (window.innerWidth/640);
+	local_player.attack_dir = (x > local_player.x ? 0 : 1);
 }
 
 document.onmouseup = function(event) {
 	local_player.attack = false;
+
+	socket.emit("move", {
+		x : local_player.x,
+		y : local_player.y,
+		attack : local_player.attack,
+		attack_dir : local_player.attack_dir
+	});
 }

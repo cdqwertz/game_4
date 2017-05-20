@@ -40,6 +40,7 @@ module.exports = {
 		};
 		this.team=team;
 		this.player_id = player_id;
+		this.attack = false;
 	},
 
 	game : function () {

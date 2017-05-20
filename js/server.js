@@ -39,6 +39,7 @@ var images = {
 
 	weapons : {
 		sword : fs.readFileSync("./img/sword.png"),
+		sword_attack : fs.readFileSync("./img/sword_attack.png"),
 		sword_short : fs.readFileSync("./img/sword_short.png")
 	}
 };
@@ -55,6 +56,9 @@ var my_server = http.createServer(function (req, res) {
 	} else if (req.url == "/img/sword.png") {
 		res.writeHead(200, {"Content-Type" : "image/png"});
 		res.end(images.weapons.sword);
+	} else if (req.url == "/img/sword_attack.png") {
+		res.writeHead(200, {"Content-Type" : "image/png"});
+		res.end(images.weapons.sword_attack);
 	} else if (req.url == "/img/player_red.png") {
 		res.writeHead(200, {"Content-Type" : "image/png"});
 		res.end(images.player_red);
@@ -93,13 +97,17 @@ io.on("connection", function(socket) {
 				if(pl) {
 					pl.pos.x = data.x;
 					pl.pos.y = data.y;
+					pl.attack = data.attack;
 
 					for(var i = 0; i < my_game.players.length; i++) {
 						if(pl.player_id != my_game.players[i].player_id) {
+							//TODO: check values
 							my_game.players[i].socket.emit("moved", {
 								player_id : pl.player_id,
 								x : data.x,
-								y : data.y
+								y : data.y,
+								attack : data.attack,
+								attack_dir : data.attack_dir
 							});
 						}
 					}
