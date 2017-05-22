@@ -49,6 +49,8 @@ var local_player = {
 	attack_dir : 0
 };
 
+
+// input
 var input = {
 	up : false,
 	down : false,
@@ -57,24 +59,42 @@ var input = {
 	run : false
 };
 
+// decorations
+var tree_positions = [];
+
 // sprites / images
 var images = {
 	player_red : new Image(),
 	player_blue : new Image(),
 	sword : new Image(),
-	sword_attack : new Image()
+	sword_attack : new Image(),
+
+	ground : new Image(),
+	tree : new Image()
 };
+
+var fill_bg;
 
 images.player_red.src = "/img/player_red.png";
 images.player_blue.src = "/img/player_blue.png";
 images.sword.src = "/img/sword.png";
 images.sword_attack.src = "/img/sword_attack.png";
+images.ground.src = "/img/ground.png";
+images.tree.src = "/img/tree.png";
 
 function load() {
 	canvas = document.getElementById("canvas");
 	canvas.width = 640;
 	canvas.height = 320;
 	ctx = canvas.getContext("2d");
+
+	fill_bg = ctx.createPattern(images.ground, "repeat");
+
+	for (var i = 0; i < 30; i++) {
+		var x = Math.floor((Math.random()*640));
+		var y = Math.floor((Math.random()*320));
+		tree_positions.push([x, y]);
+	}
 
 	// call update
 	window.requestAnimationFrame(update);
@@ -83,6 +103,9 @@ function load() {
 function update(t) {
 	var dtime = t - last_time;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	ctx.fillStyle = fill_bg;
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	if(game_state == 0) {
 		if(input.up || input.down || input.left || input.right) {
@@ -111,6 +134,11 @@ function update(t) {
 				attack : local_player.attack,
 				attack_dir : local_player.attack_dir
 			});
+		}
+
+		for (var i = 0; i < tree_positions.length; i++) {
+			var tree_pos = tree_positions[i];
+			ctx.drawImage(images.tree, tree_pos[0], tree_pos[1]);
 		}
 
 		// draw other players

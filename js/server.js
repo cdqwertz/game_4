@@ -31,11 +31,15 @@ const game = require(__dirname + "/game.js");
 
 var index = fs.readFileSync("./index.html");
 var client_js = fs.readFileSync("./js/client.js");
+var render_js = fs.readFileSync("./js/render.js");
+
 var images = {
 	player_blue : fs.readFileSync("./img/player_blue.png"),
 	player_red : fs.readFileSync("./img/player_red.png"),
 	tree : fs.readFileSync("./img/tree.png"),
 	dirt : fs.readFileSync("./img/dirt.png"),
+	ground : fs.readFileSync("./img/ground.png"),
+	tree : fs.readFileSync("./img/tree.png"),
 
 	weapons : {
 		sword : fs.readFileSync("./img/sword.png"),
@@ -53,6 +57,9 @@ var my_server = http.createServer(function (req, res) {
 	} else if (req.url == "/client.js") {
 		res.writeHead(200);
 		res.end(client_js);
+	} else if (req.url == "/render.js") {
+		res.writeHead(200);
+		res.end(render_js);
 	} else if (req.url == "/img/sword.png") {
 		res.writeHead(200, {"Content-Type" : "image/png"});
 		res.end(images.weapons.sword);
@@ -65,9 +72,12 @@ var my_server = http.createServer(function (req, res) {
 	} else if (req.url == "/img/player_blue.png") {
 		res.writeHead(200, {"Content-Type" : "image/png"});
 		res.end(images.player_blue);
-	} else if (req.url == "/img/dirt.png") {
+	} else if (req.url == "/img/tree.png") {
 		res.writeHead(200, {"Content-Type" : "image/png"});
-		res.end(images.dirt);
+		res.end(images.tree);
+	} else if (req.url == "/img/ground.png") {
+		res.writeHead(200, {"Content-Type" : "image/png"});
+		res.end(images.ground);
 	}
 });
 
