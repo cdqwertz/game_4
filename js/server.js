@@ -105,10 +105,10 @@ io.on("connection", function(socket) {
 							//TODO: check values
 							if(pl.attack){
 								if(pl.attack_dir==0){
-									if((my_game.players[i].x>=pl.x+8)&&(my_game.players[i].x<=pl.x+24),(my_game.players[i].y>=pl.y+9)&&(my_game.players[i].y<=pl.x+11))
+									if((my_game.players[i].x>=pl.x+8)&&(my_game.players[i].x<=pl.x+24)&&(my_game.players[i].y+16>=pl.y+9)&&(my_game.players[i].y+16<=pl.y+11))
 										my_game.players[i].hp-=3;
 								}else{
-									if((my_game.players[i].x<=pl.x-8)&&(my_game.players[i].x>=pl.x-24),(my_game.players[i].y>=pl.y+9)&&(my_game.players[i].y<=pl.x+11))
+									if((my_game.players[i].x<=pl.x-8)&&(my_game.players[i].x>=pl.x-24)&&(my_game.players[i].y+16>=pl.y+9)&&(my_game.players[i].y+16<=pl.y+11))
 										my_game.players[i].hp-=3;
 								}
 								console.log(my_game.players[i].hp);
