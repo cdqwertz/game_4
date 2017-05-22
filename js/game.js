@@ -32,7 +32,7 @@ module.exports = {
 
 	player : function (socket, name, player_id,team) {
 		this.socket = socket;
-		this.hp = 100;
+		this.hp = 10;
 		this.name = name;
 		this.pos = {
 			x : 0,
@@ -79,7 +79,8 @@ module.exports = {
 					pos_y : p.pos.y,
 					name : p.name,
 					id : p.player_id,
-					team : p.team
+					team : p.team,
+					hp : p.hp
 				});
 			}
 

@@ -87,7 +87,8 @@ io.on("connection", function(socket) {
 
 	socket.on("hello", function (data) {
 		if (my_game.is_name_allowed(data.name)) {
-			my_player = new game.player(socket, data.name, my_game.get_player_id(), Math.floor(Math.random() * 2));
+			my_player = new game.player(socket, data.name, my_game.get_player_id(), (my_game.players.length%2==0) ? 0:1);
+			console.log((my_game.players.length%2==0) ? 0:1);
 			my_game.players.push(my_player);
 			io.emit("data", my_game.get_data());
 			console.log("send data, id: " + my_player.player_id);
@@ -102,10 +103,22 @@ io.on("connection", function(socket) {
 					for(var i = 0; i < my_game.players.length; i++) {
 						if(pl.player_id != my_game.players[i].player_id) {
 							//TODO: check values
+							if(pl.attack){
+								if(pl.attack_dir==0){
+									if((my_game.players[i].x>=pl.x+8)&&(my_game.players[i].x<=pl.x+24),(my_game.players[i].y>=pl.y+9)&&(my_game.players[i].y<=pl.x+11))
+										my_game.players[i].hp-=3;
+								}else{
+									if((my_game.players[i].x<=pl.x-8)&&(my_game.players[i].x>=pl.x-24),(my_game.players[i].y>=pl.y+9)&&(my_game.players[i].y<=pl.x+11))
+										my_game.players[i].hp-=3;
+								}
+								console.log(my_game.players[i].hp);
+							}
+							
 							my_game.players[i].socket.emit("moved", {
 								player_id : pl.player_id,
 								x : data.x,
 								y : data.y,
+								hp : data.hp,
 								attack : data.attack,
 								attack_dir : data.attack_dir
 							});
