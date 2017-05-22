@@ -138,7 +138,7 @@ function update(t) {
 
 		for (var i = 0; i < tree_positions.length; i++) {
 			var tree_pos = tree_positions[i];
-			ctx.drawImage(images.tree, tree_pos[0], tree_pos[1]);
+			renderer.push(images.tree, tree_pos[0], tree_pos[1]);
 		}
 
 		// draw other players
@@ -150,6 +150,8 @@ function update(t) {
 
 		// draw local_player
 		draw_player(local_player);
+
+		renderer.render();
 	} else if (game_state == 1) {
 		local_player.name = prompt("Enter your nickname");
 
@@ -171,28 +173,12 @@ function update(t) {
 // used to draw player
 
 function draw_player(pl) {
-	ctx.translate(Math.round(pl.x), Math.round(pl.y));
-
-	// flip player
-	if(pl.attack_dir == 1) {
-		ctx.translate(16, 0);
-		ctx.scale(-1, 1);
-	}
-
 	// draw player
 	if(pl.team == 0) {
-		ctx.drawImage(images.player_blue, 0, 0);
+		renderer.push(images.player_blue, Math.round(pl.x), Math.round(pl.y), pl.attack_dir)
 	} else if (pl.team == 1) {
-		ctx.drawImage(images.player_red, 0, 0);
+		renderer.push(images.player_red, Math.round(pl.x), Math.round(pl.y), pl.attack_dir)
 	}
-
-	// undo transformations
-	if(pl.attack_dir == 1) {
-		ctx.scale(-1, 1);
-		ctx.translate(-16, 0);
-	}
-
-	ctx.translate(-Math.round(pl.x), -Math.round(pl.y));
 
 	// draw weapon
 	ctx.translate(Math.round(pl.x) + 8, Math.round(pl.y) - 3);

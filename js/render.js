@@ -28,11 +28,12 @@ DEALINGS IN THE SOFTWARE.
 var renderer = new function() {
 	this.objects = [];
 
-	this.push = function(image, x, y) {
+	this.push = function(image, x, y, flip) {
 		this.objects.push({
 			img : image,
 			x : x,
-			y : y
+			y : y,
+			flip : flip
 		});
 	};
 
@@ -40,16 +41,36 @@ var renderer = new function() {
 	this.render = function() {
 		for (var i = 0; i < this.objects.length; i++) {
 			var j = i + 1;
-			while (j < this.objects.length && this.objects[i].y < obj[j].y) {
+			while (j < this.objects.length && this.objects[i].y < this.objects[j].y) {
 				var a = this.objects[j];
 				this.objects[j] = this.objects[i];
-				this.objects[i] = this.objects[j];
+				this.objects[i] = a;
+				j++;
 			}
 		}
 
+		// BAD CODE
+		this.objects.reverse();
+		// END BAD CODE
+
 		for (var i = 0; i < this.objects.length; i++) {
 			var obj = this.objects[i];
-			ctx.drawImage(obj.img, obj.x, obj.y);
+
+			ctx.translate(obj.x, obj.y);
+
+			if(obj.flip) {
+				ctx.translate(16, 0);
+				ctx.scale(-1, 1);
+			}
+
+			ctx.drawImage(obj.img, 0, 0);
+
+			if(obj.flip) {
+				ctx.scale(-1, 1);
+				ctx.translate(-16, 0);
+			}
+
+			ctx.translate(-obj.x, -obj.y);
 		}
 
 		this.objects = [];
