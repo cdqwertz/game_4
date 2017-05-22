@@ -102,7 +102,6 @@ io.on("connection", function(socket) {
 
 					for(var i = 0; i < my_game.players.length; i++) {
 						if(pl.player_id != my_game.players[i].player_id) {
-							//TODO: check values
 							if(pl.attack){
 								if(pl.attack_dir==0){
 									if((my_game.players[i].x>=pl.x+8)&&(my_game.players[i].x<=pl.x+24)&&(my_game.players[i].y+16>=pl.y+9)&&(my_game.players[i].y+16<=pl.y+11))
